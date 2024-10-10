@@ -2,25 +2,45 @@ package tcp
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net"
+
+	"github.com/scorify/schema"
 )
 
 type Schema struct {
-	Host string `json:"host"`
-	Port int    `json:"port"`
+	Target string `key:"target"`
+	Port   int    `key:"port"`
 }
 
-func Run(ctx context.Context, config string) error {
-	schema := Schema{}
+func Validate(config string) error {
+	conf := Schema{}
 
-	err := json.Unmarshal([]byte(config), &schema)
+	err := schema.Unmarshal([]byte(config), &conf)
 	if err != nil {
 		return err
 	}
 
-	connStr := fmt.Sprintf("%s:%d", schema.Host, schema.Port)
+	if conf.Target == "" {
+		return fmt.Errorf("target is required; got %q", conf.Target)
+	}
+
+	if conf.Port <= 0 || conf.Port > 65535 {
+		return fmt.Errorf("provided invalid port: %d", conf.Port)
+	}
+
+	return nil
+}
+
+func Run(ctx context.Context, config string) error {
+	conf := Schema{}
+
+	err := schema.Unmarshal([]byte(config), &conf)
+	if err != nil {
+		return err
+	}
+
+	connStr := fmt.Sprintf("%s:%d", conf.Target, conf.Port)
 
 	dialer := &net.Dialer{}
 	conn, err := dialer.DialContext(ctx, "tcp", connStr)
