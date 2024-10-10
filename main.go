@@ -8,8 +8,8 @@ import (
 )
 
 type Schema struct {
-	Host string `json:"host"`
-	Port int    `json:"port"`
+	Target string `key:"target"`
+	Port   int    `key:"port"`
 }
 
 func Run(ctx context.Context, config string) error {
