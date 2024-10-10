@@ -34,14 +34,14 @@ func Validate(config string) error {
 }
 
 func Run(ctx context.Context, config string) error {
-	schema := Schema{}
+	conf := Schema{}
 
-	err := json.Unmarshal([]byte(config), &schema)
+	err := json.Unmarshal([]byte(config), &conf)
 	if err != nil {
 		return err
 	}
 
-	connStr := fmt.Sprintf("%s:%d", schema.Host, schema.Port)
+	connStr := fmt.Sprintf("%s:%d", conf.Target, conf.Port)
 
 	dialer := &net.Dialer{}
 	conn, err := dialer.DialContext(ctx, "tcp", connStr)
