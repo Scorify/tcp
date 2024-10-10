@@ -2,7 +2,6 @@ package tcp
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net"
 
@@ -36,7 +35,7 @@ func Validate(config string) error {
 func Run(ctx context.Context, config string) error {
 	conf := Schema{}
 
-	err := json.Unmarshal([]byte(config), &conf)
+	err := schema.Unmarshal([]byte(config), &conf)
 	if err != nil {
 		return err
 	}
